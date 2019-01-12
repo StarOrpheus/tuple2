@@ -41,6 +41,8 @@ TEST(basic, constructor)
     assert(get<2>(tt) == 4);
 }
 
+// Tests by Artem Yurchenko
+// Author: https://gitlab.com/grepcake/tuple
 template <typename ...Args>
 using container = tuple2<Args...>;
 
