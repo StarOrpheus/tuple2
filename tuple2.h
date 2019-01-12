@@ -14,6 +14,7 @@ struct tuple2 final
 {
     using ImplType = tuple2_impl_::tuple2_impl<std::make_index_sequence<sizeof...(Ts)>, Ts...>;
     using ImplType::ImplType;
+
     tuple2() = default;
 };
 
@@ -50,14 +51,17 @@ namespace tuple2_impl_
     };
 
     template<typename T, size_t I>
-    struct indexed_elem_storage : indexed<T, I>
+    struct indexed_elem_storage
+        : indexed<T, I>
     {
         indexed_elem_storage() = default;
 
-        indexed_elem_storage(T const& other) : holder(std::forward<T const&>(other))
+        indexed_elem_storage(T const& other)
+            : holder(std::forward<T const&>(other))
         {}
 
-        indexed_elem_storage(T&& other) : holder(std::forward<T&&>(other))
+        indexed_elem_storage(T&& other)
+            : holder(std::forward<T&&>(other))
         {}
 
         T& get() { return holder; }
@@ -124,9 +128,11 @@ namespace tuple2_impl_
     // {};
 
     template<typename... Ts, size_t... I>
-    struct tuple2_impl<std::index_sequence<I...>, Ts...> : indexed_elem_storage<Ts, I>...
+    struct tuple2_impl<std::index_sequence<I...>, Ts...>
+        : indexed_elem_storage<Ts, I>...
     {
         using Type = tuple2_impl<std::index_sequence<I...>, Ts...>;
+
         tuple2_impl() = default;
 
         tuple2_impl(Type const& other)
@@ -137,7 +143,8 @@ namespace tuple2_impl_
             : indexed_elem_storage<Ts, I>(static_cast<indexed_elem_storage<Ts, I>&&>(std::move(other)))...
         {}
 
-        tuple2_impl(Ts... args) : indexed_elem_storage<Ts, I>(std::forward<Ts>(args))...
+        tuple2_impl(Ts... args)
+            : indexed_elem_storage<Ts, I>(std::forward<Ts>(args))...
         {}
 
         Type& operator=(Type const& other) = default;
@@ -158,18 +165,18 @@ namespace tuple2_impl_
         }
 
         template<typename T,
-            typename T2 = typename std::enable_if<count_occurences<T, Ts...>::value == 1>::type,
-            size_t I = find_index<T, Ts...>::value>
-            friend T& get(tuple2<Ts...>& t)
+                 typename T2 = typename std::enable_if<count_occurences<T, Ts...>::value == 1>::type,
+                 size_t I = find_index<T, Ts...>::value>
+        friend T& get(tuple2<Ts...>& t)
         {
             using elem_type = nth_element<I, Ts...>;
             return static_cast<indexed_elem_storage<elem_type, I> &>(t).get();
         }
 
         template<typename T,
-            typename T2 = typename std::enable_if<count_occurences<T, Ts...>::value == 1>::type,
-            size_t I = find_index<T, Ts...>::value>
-            friend T const& get(tuple2<Ts...> const& t)
+                 typename T2 = typename std::enable_if<count_occurences<T, Ts...>::value == 1>::type,
+                 size_t I = find_index<T, Ts...>::value>
+        friend T const& get(tuple2<Ts...> const& t)
         {
             using elem_type = nth_element<I, Ts...>;
             return static_cast<indexed_elem_storage<elem_type, I> const&>(t).get();
