@@ -143,7 +143,7 @@ namespace tuple2_impl_
             : indexed_elem_storage<Ts, I>(static_cast<indexed_elem_storage<Ts, I>&&>(std::move(other)))...
         {}
 
-        tuple2_impl(Ts... args)
+        explicit tuple2_impl(Ts... args)
             : indexed_elem_storage<Ts, I>(std::forward<Ts>(args))...
         {}
 
