@@ -8,7 +8,7 @@
 #include "gtest/gtest.h"
 #include "tuple2.h"
 
-TEST(basic, constructor)
+TEST(basic, default_con)
 {
     tuple2<std::string, int, double> t;
     get<1>(t) = 4;
@@ -17,7 +17,13 @@ TEST(basic, constructor)
     assert(get<1>(t) == 4);
     assert(get<int>(t) == 4);
     assert(get<std::string>(t) == "sta");
+}
 
+TEST(basic, c_con)
+{
+    tuple2<std::string, int, double> t;
+    get<1>(t) = 4;
+    get<0>(t) = "sta";
 
     tuple2<std::string, int, double> t2 = t;
     assert(get<0>(t) == get<0>(t2));
@@ -26,19 +32,41 @@ TEST(basic, constructor)
     assert(get<std::string>(t) == get<std::string>(t2));
     assert(get<int>(t) == get<int>(t2));
     assert(get<double>(t) == get<double>(t2));
+}
+
+TEST(basic, move_con)
+{
+    tuple2<std::string, int, double> t2;
+    get<1>(t2) = 4;
+    get<0>(t2) = "sta";
 
     tuple2<std::string, int, double> t3 = std::move(t2);
     assert(get<std::string>(t2).empty());
     assert(!get<std::string>(t3).empty());
-    
-    t2 = std::move(t3);
-    assert(get<std::string>(t3).empty());
-    assert(!get<std::string>(t2).empty());
+}
+
+TEST(basic, args_con)
+{
+    tuple2<std::string, int, double> t;
+    get<1>(t) = 4;
+    get<0>(t) = "sta";
 
     tuple2<int, double, int> tt(1, 23.0, 4);
     assert(get<0>(tt) == 1);
     assert(get<1>(tt) - 23.0 < 1e-9);
     assert(get<2>(tt) == 4);
+}
+
+TEST(basic, get_move)
+{
+    tuple2<std::string, int, double> t;
+    get<1>(t) = 4;
+    get<0>(t) = "sta";
+
+    std::string s("123123123");
+    get<0>(t) = std::move(s);
+    EXPECT_EQ(get<0>(t), "123123123");
+    EXPECT_EQ(s.size(), 0);
 }
 
 // Tests by Artem Yurchenko
