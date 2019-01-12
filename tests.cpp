@@ -82,6 +82,28 @@ TEST(basic, cast_con)
     assert(std::abs(get<double>(t) - 12) < 1e-9);
 }
 
+struct copy_conn_counter
+{
+    static size_t copy_conn_calls;
+
+    copy_conn_counter() = default;
+    copy_conn_counter(copy_conn_counter const& orher)
+    {
+        copy_conn_calls++;
+    }
+
+    copy_conn_counter(copy_conn_counter&&) = delete;
+};
+
+size_t copy_conn_counter::copy_conn_calls = 0;
+
+TEST(basic, redundant_copies)
+{
+    copy_conn_counter cnt;
+    tuple2<copy_conn_counter> t(cnt);
+    EXPECT_EQ(cnt.copy_conn_calls, 1);
+}
+
 // Tests by Artem Yurchenko
 // Author: https://gitlab.com/grepcake/tuple
 template <typename ...Args>

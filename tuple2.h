@@ -2,17 +2,17 @@
 
 #include <typeindex>
 
-namespace tuple2_impl_
+namespace tuple2_impl
 {
     template<typename IndexSequence, typename... Ts>
-    struct tuple2_impl;
+    struct tuple2_impl_t;
 }
 
 template<typename... Ts>
 struct tuple2 final
-    : tuple2_impl_::tuple2_impl<std::make_index_sequence<sizeof...(Ts)>, Ts...>
+    : tuple2_impl::tuple2_impl_t<std::make_index_sequence<sizeof...(Ts)>, Ts...>
 {
-    using ImplType = tuple2_impl_::tuple2_impl<std::make_index_sequence<sizeof...(Ts)>, Ts...>;
+    using ImplType = tuple2_impl::tuple2_impl_t<std::make_index_sequence<sizeof...(Ts)>, Ts...>;
     using ImplType::ImplType;
 
     tuple2() = default;
@@ -21,28 +21,28 @@ struct tuple2 final
 template<size_t Ind, typename... Ts>
 decltype(auto) get(tuple2<Ts...>& t)
 {
-    return tuple2_impl_::get<Ind>(t);
+    return tuple2_impl::get<Ind>(t);
 }
 
 template<size_t Ind, typename... Ts>
 decltype(auto) get(tuple2<Ts...> const& t)
 {
-    return tuple2_impl_::get<Ind>(t);
+    return tuple2_impl::get<Ind>(t);
 }
 
 template<typename Ind, typename... Ts>
 decltype(auto) get(tuple2<Ts...>& t)
 {
-    return tuple2_impl_::get<Ind>(t);
+    return tuple2_impl::get<Ind>(t);
 }
 
 template<typename Ind, typename... Ts>
 decltype(auto) get(tuple2<Ts...> const& t)
 {
-    return tuple2_impl_::get<Ind>(t);
+    return tuple2_impl::get<Ind>(t);
 }
 
-namespace tuple2_impl_
+namespace tuple2_impl
 {
     template <typename T, std::size_t I>
     struct indexed
@@ -128,23 +128,24 @@ namespace tuple2_impl_
     // {};
 
     template<typename... Ts, size_t... I>
-    struct tuple2_impl<std::index_sequence<I...>, Ts...>
+    struct tuple2_impl_t<std::index_sequence<I...>, Ts...>
         : indexed_elem_storage<Ts, I>...
     {
-        using Type = tuple2_impl<std::index_sequence<I...>, Ts...>;
+        using Type = tuple2_impl_t<std::index_sequence<I...>, Ts...>;
 
-        tuple2_impl() = default;
+        tuple2_impl_t() = default;
 
-        tuple2_impl(Type const& other)
+        tuple2_impl_t(Type const& other)
             : indexed_elem_storage<Ts, I>(static_cast<indexed_elem_storage<Ts, I> const&>(other))...
         {}
 
-        tuple2_impl(Type&& other) noexcept
+        tuple2_impl_t(Type&& other) noexcept
             : indexed_elem_storage<Ts, I>(static_cast<indexed_elem_storage<Ts, I>&&>(std::move(other)))...
         {}
 
-        explicit tuple2_impl(Ts... args)
-            : indexed_elem_storage<Ts, I>(std::forward<Ts>(args))...
+        template<typename... SecTps>
+        explicit tuple2_impl_t(SecTps&&... args)
+            : indexed_elem_storage<Ts, I>(std::forward<SecTps&&>(args))...
         {}
 
         Type& operator=(Type const& other) = default;
