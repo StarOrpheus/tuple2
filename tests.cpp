@@ -69,6 +69,19 @@ TEST(basic, get_move)
     EXPECT_EQ(s.size(), 0);
 }
 
+TEST(basic, cast_con)
+{
+    tuple2<std::string, int, double> t("asd", 12, 12);
+    EXPECT_EQ(get<0>(t), "asd");
+    EXPECT_EQ(get<std::string>(t), "asd");
+
+    EXPECT_EQ(get<1>(t), 12);
+    EXPECT_EQ(get<int>(t), 12);
+
+    assert(std::abs(get<2>(t) - 12) < 1e-9);
+    assert(std::abs(get<double>(t) - 12) < 1e-9);
+}
+
 // Tests by Artem Yurchenko
 // Author: https://gitlab.com/grepcake/tuple
 template <typename ...Args>
